@@ -110,7 +110,12 @@ impl PlatformInfoResult {
                         "[NONE]")));
                 }
 
-                let string = try_ir!(try_ir!(CString::new(result)).into_string());
+                // let string = try_ir!(try_ir!(CString::new(result)).into_string());
+
+                let string = match util::bytes_to_str(result) {
+                    Ok(s) => s,
+                    Err(err) => return PlatformInfoResult::Error(Box::new(err)),
+                };
 
                 match request {
                     PlatformInfo::Profile => PlatformInfoResult::Profile(string),
@@ -524,39 +529,39 @@ impl DeviceInfoResult {
                         DeviceInfoResult::QueueProperties(r)
                     },
                     DeviceInfo::Name => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => DeviceInfoResult::Name(s),
-                            Err(err) => DeviceInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => DeviceInfoResult::Error(Box::new(err)),
                         }
                     },
                     DeviceInfo::Vendor => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => DeviceInfoResult::Vendor(s),
-                            Err(err) => DeviceInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => DeviceInfoResult::Error(Box::new(err)),
                         }
                     },
                     DeviceInfo::DriverVersion => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => DeviceInfoResult::DriverVersion(s),
-                            Err(err) => DeviceInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => DeviceInfoResult::Error(Box::new(err)),
                         }
                     },
                     DeviceInfo::Profile => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => DeviceInfoResult::Profile(s),
-                            Err(err) => DeviceInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => DeviceInfoResult::Error(Box::new(err)),
                         }
                     },
                     DeviceInfo::Version => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => DeviceInfoResult::Version(s),
-                            Err(err) => DeviceInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => DeviceInfoResult::Error(Box::new(err)),
                         }
                     },
                     DeviceInfo::Extensions => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => DeviceInfoResult::Extensions(s),
-                            Err(err) => DeviceInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => DeviceInfoResult::Error(Box::new(err)),
                         }
                     },
                     DeviceInfo::Platform => {
@@ -608,9 +613,9 @@ impl DeviceInfoResult {
                         DeviceInfoResult::NativeVectorWidthHalf(r)
                     },
                     DeviceInfo::OpenclCVersion => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => DeviceInfoResult::OpenclCVersion(s),
-                            Err(err) => DeviceInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => DeviceInfoResult::Error(Box::new(err)),
                         }
                     },
                     DeviceInfo::LinkerAvailable => {
@@ -618,9 +623,9 @@ impl DeviceInfoResult {
                         DeviceInfoResult::LinkerAvailable(r != 0)
                     },
                     DeviceInfo::BuiltInKernels => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => DeviceInfoResult::BuiltInKernels(s),
-                            Err(err) => DeviceInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => DeviceInfoResult::Error(Box::new(err)),
                         }
                     },
                     DeviceInfo::ImageMaxBufferSize => {
@@ -1449,9 +1454,9 @@ impl ProgramInfoResult {
                         )
                     },
                     ProgramInfo::Source => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => ProgramInfoResult::Source(s),
-                            Err(err) => ProgramInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => ProgramInfoResult::Error(Box::new(err)),
                         }
                     },
                     ProgramInfo::BinarySizes => { ProgramInfoResult::BinarySizes(
@@ -1466,9 +1471,9 @@ impl ProgramInfoResult {
                         ProgramInfoResult::NumKernels(r)
                     },
                     ProgramInfo::KernelNames => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => ProgramInfoResult::KernelNames(s),
-                            Err(err) => ProgramInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => ProgramInfoResult::Error(Box::new(err)),
                         }
                     },
                     // _ => ProgramInfoResult::TemporaryPlaceholderVariant(result),
@@ -1558,15 +1563,15 @@ impl ProgramBuildInfoResult {
                         }
                     },
                     ProgramBuildInfo::BuildOptions => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => ProgramBuildInfoResult::BuildOptions(s),
-                            Err(err) => ProgramBuildInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => ProgramBuildInfoResult::Error(Box::new(err)),
                         }
                     },
                     ProgramBuildInfo::BuildLog => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => ProgramBuildInfoResult::BuildLog(s),
-                            Err(err) => ProgramBuildInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => ProgramBuildInfoResult::Error(Box::new(err)),
                         }
                     },
                     ProgramBuildInfo::BinaryType => {
@@ -1644,9 +1649,9 @@ impl KernelInfoResult {
                 }
                 match request {
                     KernelInfo::FunctionName => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => KernelInfoResult::FunctionName(s),
-                            Err(err) => KernelInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => KernelInfoResult::Error(Box::new(err)),
                         }
                     },
                     KernelInfo::NumArgs => {
@@ -1666,9 +1671,9 @@ impl KernelInfoResult {
                         KernelInfoResult::Program(unsafe { Program::from_copied_ptr(ptr) })
                     },
                     KernelInfo::Attributes => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => KernelInfoResult::Attributes(s),
-                            Err(err) => KernelInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => KernelInfoResult::Error(Box::new(err)),
                         }
                     },
                 }
@@ -1761,9 +1766,9 @@ impl KernelArgInfoResult {
                         }
                     },
                     KernelArgInfo::TypeName => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => KernelArgInfoResult::TypeName(s),
-                            Err(err) => KernelArgInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => KernelArgInfoResult::Error(Box::new(err)),
                         }
                     },
                     KernelArgInfo::TypeQualifier => {
@@ -1771,9 +1776,9 @@ impl KernelArgInfoResult {
                         KernelArgInfoResult::TypeQualifier(r)
                     },
                     KernelArgInfo::Name => {
-                        match String::from_utf8(result) {
+                        match bytes_to_str(result) {
                             Ok(s) => KernelArgInfoResult::Name(s),
-                            Err(err) => KernelArgInfoResult::Error(Box::new(OclError::from(err))),
+                            Err(err) => KernelArgInfoResult::Error(Box::new(err)),
                         }
                     },
                 }
